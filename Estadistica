@@ -1,0 +1,33 @@
+import streamlit as st
+
+st.title("🧠 Teorema de Bayes — Demo Interactiva")
+
+prevalencia = st.slider("Prevalencia P(A)", 0.001, 0.2, 0.01)
+sensibilidad = st.slider("Sensibilidad P(B|A)", 0.5, 1.0, 0.9)
+especificidad = st.slider("Especificidad P(¬B|¬A)", 0.5, 1.0, 0.95)
+
+N = 1000
+enfermos = N * prevalencia
+sanos = N - enfermos
+
+vp = sensibilidad * enfermos
+fp = (1 - especificidad) * sanos
+
+posterior = vp / (vp + fp)
+
+st.latex(
+    rf"""
+    P(A|B) =
+    \frac{{{sensibilidad:.2f} \times {prevalencia:.3f}}}
+    {{{sensibilidad:.2f} \times {prevalencia:.3f} + (1 - {especificidad:.2f}) \times (1 - {prevalencia:.3f})}}
+    """
+)
+
+st.metric(
+    "Probabilidad real de estar enfermo dado positivo",
+    f"{posterior*100:.2f}%"
+)
+
+st.write("En 1.000 personas:")
+st.write(f"Verdaderos positivos: {vp:.0f}")
+st.write(f"Falsos positivos: {fp:.0f}")
